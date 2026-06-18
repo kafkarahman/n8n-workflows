@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#151515">
+<title>QC Batch Submission — 2X Experience Design Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#151515;
+  --sidebar-bg:#101010;
+  --surface:#1B1B1B;
+  --surface-2:#222222;
+  --surface-3:#2A2A2A;
+  --white:#FFFFFF;
+  --soft:#E6E6E6;
+  --muted:#A9A9A9;
+  --muted-2:#797979;
+  --line:#363636;
+  --line-soft:rgba(255,255,255,.08);
+  --red:#FF0F0F;
+  --blue:#007FFF;
+  --teal:#00A884;
+  --purple:#9966FF;
+  --amber:#FFB020;
+  --mode-accent:var(--blue);
+  --sidebar:252px;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 22px 60px rgba(0,0,0,.28);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  margin:0;
+  min-width:320px;
+  font-family:'Inter',Arial,sans-serif;
+  background:
+    radial-gradient(circle at 82% 2%,color-mix(in srgb,var(--mode-accent),transparent 92%),transparent 28rem),
+    var(--bg);
+  color:var(--white);
+  font-size:15px;
+  line-height:1.6;
+  letter-spacing:-.01em;
+  -webkit-font-smoothing:antialiased;
+  transition:background .25s ease;
+}
+button,input,textarea{font:inherit}
+button{color:inherit}
+::selection{background:color-mix(in srgb,var(--mode-accent),transparent 62%)}
+
+/* App shell */
+.sidebar{
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:40;
+  width:var(--sidebar);
+  padding:28px 22px 24px;
+  display:flex;
+  flex-direction:column;
+  background:var(--sidebar-bg);
+  border-right:1px solid var(--line);
+}
+.brand-lockup{display:block;width:max-content;margin:2px 8px 36px;text-decoration:none}
+.brand-lockup img{display:block;width:92px;height:auto}
+.sidebar-label{
+  margin:0 10px 12px;
+  color:var(--muted-2);
+  font-size:10px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
+.side-nav{display:grid;gap:5px}
+.nav-item{
+  width:100%;
+  display:grid;
+  grid-template-columns:29px 1fr;
+  align-items:center;
+  padding:11px 12px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:var(--muted);
+  text-align:left;
+  cursor:pointer;
+  transition:background .18s ease,color .18s ease,transform .18s ease;
+}
+.nav-item span{font-size:10px;font-weight:800;letter-spacing:.08em}
+.nav-item strong{font-size:13px;font-weight:600}
+.nav-item:hover{background:var(--surface-2);color:var(--white);transform:translateX(2px)}
+.nav-item.active{background:var(--surface-3);color:var(--white);box-shadow:inset 3px 0 0 var(--red)}
+.nav-item.active span{color:var(--red)}
+.sidebar-footer{margin-top:auto;padding:19px 9px 0;border-top:1px solid var(--line);color:var(--muted-2);font-size:11px;line-height:1.55}
+.sidebar-footer strong{display:block;margin-bottom:4px;color:var(--soft);font-size:12px;font-weight:600}
+.sidebar-footer .live-dot{display:inline-block;width:6px;height:6px;margin-right:7px;border-radius:50%;background:var(--teal);box-shadow:0 0 14px rgba(0,168,132,.6)}
+
+.main-shell{margin-left:var(--sidebar);min-height:100vh}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:30;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  padding:0 clamp(22px,4vw,58px);
+  background:rgba(21,21,21,.86);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.mobile-menu{display:none;width:40px;height:40px;border:1px solid var(--line);border-radius:11px;background:var(--surface);cursor:pointer}
+.topbar-title{min-width:0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-title strong{color:var(--white);font-weight:600}
+.topbar-tools{display:flex;align-items:center;gap:14px}
+.mode-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 10px;
+  border:1px solid color-mix(in srgb,var(--mode-accent),transparent 50%);
+  border-radius:999px;
+  background:color-mix(in srgb,var(--mode-accent),transparent 90%);
+  color:color-mix(in srgb,var(--mode-accent),white 25%);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:.2s ease;
+}
+.mode-chip::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--mode-accent);box-shadow:0 0 12px var(--mode-accent)}
+.progress-wrap{display:flex;align-items:center;gap:11px;width:190px}
+.progress-track{height:3px;flex:1;background:var(--line);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;width:20%;border-radius:99px;background:var(--red);transition:width .25s ease}
+.progress-text{min-width:29px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.07em;text-align:right}
+
+.content-shell{width:min(100%,1180px);margin:0 auto;padding:clamp(42px,6vw,76px) clamp(24px,5vw,68px) 90px}
+
+/* Hero */
+.hero{
+  position:relative;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(310px,.62fr);
+  gap:clamp(38px,6vw,80px);
+  align-items:end;
+  margin-bottom:56px;
+  padding-bottom:48px;
+  border-bottom:1px solid var(--line);
+}
+.hero::after{display:none}
+.eyebrow{margin:0 0 16px;color:var(--red);font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+h1{max-width:720px;margin:0 0 22px;font-size:clamp(46px,5.3vw,76px);line-height:.98;letter-spacing:-.055em;font-weight:650;text-wrap:balance}
+.lede{max-width:720px;margin:0;color:var(--soft);font-size:clamp(16px,1.5vw,20px);line-height:1.55}
+.hero-panel{
+  position:relative;
+  overflow:hidden;
+  min-height:252px;
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:linear-gradient(145deg,#1E1E1E,#111);
+  box-shadow:var(--shadow);
+}
+.hero-panel::before{content:"";position:absolute;width:190px;height:190px;right:-72px;top:-86px;border:1px solid rgba(255,255,255,.08);border-radius:50%}
+.hero-panel::after{content:"";position:absolute;width:110px;height:110px;left:-48px;bottom:-54px;border:1px solid rgba(255,255,255,.05);border-radius:50%}
+.hero-panel-head{position:relative;z-index:1;display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:30px}
+.hero-panel-head span{color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.hero-panel-head strong{font-size:13px;font-weight:600}
+.process-list{position:relative;z-index:1;display:grid;gap:10px}
+.process-item{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08)}
+.process-item:first-child{border-top:0}
+.process-index{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:var(--surface-3);color:var(--white);font-size:10px;font-weight:800}
+.process-item:nth-child(1) .process-index{background:var(--blue)}
+.process-item:nth-child(2) .process-index{background:var(--purple)}
+.process-item:nth-child(3) .process-index{background:var(--red)}
+.process-copy strong{display:block;font-size:12px;line-height:1.25}
+.process-copy span{display:block;margin-top:2px;color:var(--muted);font-size:10px}
+.process-state{color:var(--teal);font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+
+/* Form sections */
+form{display:grid;gap:18px}
+.form-section{
+  position:relative;
+  margin:0;
+  padding:0;
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:var(--surface);
+  overflow:hidden;
+  box-shadow:0 12px 32px rgba(0,0,0,.12);
+  scroll-margin-top:92px;
+}
+.form-section.mode-panel{border-top:3px solid var(--mode-accent);transition:border-color .22s ease}
+.section-header{
+  display:grid;
+  grid-template-columns:50px minmax(0,1fr) auto;
+  align-items:start;
+  gap:18px;
+  padding:23px 26px 21px;
+  border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(255,255,255,.018),transparent);
+}
+.section-number{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.06em}
+.section-title{margin:0 0 5px;font-size:19px;line-height:1.25;letter-spacing:-.025em;font-weight:650}
+.section-description{max-width:680px;margin:0;color:var(--muted);font-size:12px;line-height:1.55}
+.section-status{margin-top:3px;color:var(--muted-2);font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.section-body{padding:26px}
+
+.field{margin-bottom:20px}
+.field:last-child{margin-bottom:0}
+.field-label,.field>label:not(.upload-zone){display:block;margin-bottom:8px;color:var(--soft);font-size:12px;font-weight:650}
+.required{color:var(--red)}
+.hint{margin:7px 0 0;color:var(--muted);font-size:11px;line-height:1.5}
+.row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+input[type=text],input[type=email],textarea{
+  width:100%;
+  border:1px solid #444;
+  border-radius:12px;
+  outline:0;
+  background:#151515;
+  color:var(--white);
+  font-size:14px;
+  transition:border-color .16s ease,box-shadow .16s ease,background .16s ease;
+}
+input[type=text],input[type=email]{height:48px;padding:0 14px}
+textarea{min-height:118px;padding:13px 14px;resize:vertical;line-height:1.55}
+input::placeholder,textarea::placeholder{color:#6E6E6E}
+input[type=text]:hover,input[type=email]:hover,textarea:hover{border-color:#565656}
+input[type=text]:focus,input[type=email]:focus,textarea:focus{border-color:var(--mode-accent);background:#171717;box-shadow:0 0 0 3px color-mix(in srgb,var(--mode-accent),transparent 82%)}
+input.invalid,textarea.invalid{border-color:var(--red)!important;box-shadow:0 0 0 3px rgba(255,15,15,.1)!important}
+.error-text{display:none;margin:7px 0 0;color:#FF7474;font-size:11px}
+.error-text.show{display:block}
+
+/* Segmented controls */
+.slider-toggle{
+  position:relative;
+  width:100%;
+  max-width:none;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  padding:4px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#121212;
+}
+.slider-toggle input{position:absolute;opacity:0;pointer-events:none}
+.slider-toggle .knob{position:absolute;z-index:0;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--mode-accent);transition:transform .22s cubic-bezier(.4,0,.2,1),background .22s ease;box-shadow:0 8px 24px color-mix(in srgb,var(--mode-accent),transparent 72%)}
+.slider-toggle.right .knob{transform:translateX(100%)}
+.slider-toggle .opt{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;min-height:45px;padding:9px 13px;border-radius:999px;color:var(--muted);font-size:12px;font-weight:650;text-align:center;cursor:pointer;user-select:none;transition:color .2s ease}
+.slider-toggle .opt.active{color:#fff}
+.slider-toggle.small{max-width:270px;border-radius:999px}
+.slider-toggle.small .knob,.slider-toggle.small .opt{border-radius:999px}
+.slider-toggle.small .opt{min-height:38px;font-size:11px}
+
+.mode-summary{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:11px}
+.mode-summary::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mode-accent);box-shadow:0 0 12px var(--mode-accent)}
+
+/* Upload controls */
+.upload-zone{
+  position:relative;
+  min-height:152px;
+  display:grid!important;
+  grid-template-columns:48px minmax(0,1fr) auto;
+  align-items:center;
+  gap:17px;
+  margin:0!important;
+  padding:22px;
+  border:1.5px dashed #4A4A4A;
+  border-radius:15px;
+  background:#151515;
+  cursor:pointer;
+  transition:border-color .18s ease,background .18s ease,transform .18s ease;
+}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--mode-accent);background:color-mix(in srgb,var(--mode-accent),#151515 94%);transform:translateY(-1px)}
+.upload-zone:has(input.invalid){border-color:var(--red);background:rgba(255,15,15,.035)}
+.upload-zone input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.upload-icon{width:48px;height:48px;display:grid;place-items:center;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);color:var(--mode-accent);transition:color .2s ease,border-color .2s ease}
+.upload-icon svg{width:21px;height:21px;stroke:currentColor}
+.upload-copy strong{display:block;color:var(--soft);font-size:13px;font-weight:650}
+.upload-copy span{display:block;margin-top:4px;color:var(--muted);font-size:11px;line-height:1.5}
+.file-name{max-width:200px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.file-name.has-file{border-color:rgba(0,168,132,.45);background:rgba(0,168,132,.08);color:#B8EADB}
+.file-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.file-meta span{padding:4px 7px;border:1px solid var(--line);border-radius:999px;color:var(--muted-2);font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+
+/* Secondary files */
+#secondaryRows{display:grid;gap:12px}
+.secondary-row{position:relative;padding:18px;border:1px solid var(--line);border-radius:15px;background:#171717}
+.secondary-row-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.secondary-row-title{display:flex;align-items:center;gap:10px;color:var(--soft);font-size:11px;font-weight:700}
+.asset-index{width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:var(--surface-3);color:var(--muted);font-size:9px;font-weight:800}
+.remove-row{width:31px;height:31px;display:grid;place-items:center;border:1px solid transparent;border-radius:9px;background:transparent;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;transition:.18s ease}
+.remove-row:hover{border-color:var(--line);background:var(--surface-2);color:var(--white)}
+.secondary-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(180px,.55fr);gap:14px;align-items:start}
+.secondary-row .upload-zone{min-height:112px;grid-template-columns:39px minmax(0,1fr);padding:16px}
+.secondary-row .upload-icon{width:39px;height:39px;border-radius:11px}
+.secondary-row .file-name{grid-column:1/-1;max-width:none;width:max-content;margin-left:56px;text-align:left}
+.tag-field{margin:0}
+.tag-field input{height:48px}
+.add-row-btn{width:100%;min-height:50px;margin-top:13px;border:1px dashed #4A4A4A;border-radius:13px;background:transparent;color:var(--soft);font-size:12px;font-weight:650;cursor:pointer;transition:.18s ease}
+.add-row-btn:hover{border-color:var(--mode-accent);background:color-mix(in srgb,var(--mode-accent),transparent 93%);color:color-mix(in srgb,var(--mode-accent),white 25%)}
+
+/* Routing and submission */
+.routing-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.priority-wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:17px;border:1px solid var(--line);border-radius:14px;background:#171717}
+.priority-copy strong{display:block;font-size:12px}
+.priority-copy span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.submit-panel{position:sticky;bottom:18px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:18px 20px;border:1px solid var(--line);border-radius:16px;background:rgba(22,22,22,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 -10px 18px rgba(21,21,21,.78),0 -28px 38px rgba(21,21,21,.56),0 -54px 64px rgba(21,21,21,.28),0 18px 48px rgba(0,0,0,.34)}
+.submit-summary{display:flex;align-items:center;gap:13px;min-width:0}
+.submit-summary-icon{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;margin:0;border-radius:50%;background:var(--surface-3);color:var(--soft);line-height:0}
+.submit-summary-icon svg{width:17px;height:17px;stroke:currentColor}
+.submit-summary strong{display:block;font-size:12px;line-height:1.3}
+.submit-summary > div > span{display:block;margin-top:2px;color:var(--muted);font-size:10px}
+button.primary{min-width:205px;height:48px;display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid var(--white);border-radius:999px;background:var(--white);color:var(--bg);font-size:12px;font-weight:750;cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,opacity .16s ease}
+button.primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,255,255,.12)}
+button.primary:active{transform:translateY(0)}
+button.primary:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.spinner{display:none;width:16px;height:16px;border:2px solid rgba(21,21,21,.25);border-top-color:var(--bg);border-radius:50%;animation:spin .7s linear infinite}
+button.primary.loading .spinner{display:inline-block}
+button.primary.loading .btn-label{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+#statusBox{display:none;margin-top:1px;padding:18px 20px;border-radius:15px;font-size:12px;line-height:1.55}
+#statusBox.show{display:block;animation:statusIn .25s ease both}
+#statusBox.success{border:1px solid rgba(0,168,132,.42);border-left:3px solid var(--teal);background:rgba(0,168,132,.08);color:#D8F3EB}
+#statusBox.error{border:1px solid rgba(255,15,15,.4);border-left:3px solid var(--red);background:rgba(255,15,15,.065);color:#FFD5D5}
+#statusBox strong{display:block;margin-bottom:4px;color:var(--white);font-size:13px}
+#statusBox p{margin:0}
+#statusBox code{display:inline-block;margin-top:7px;padding:3px 6px;border-radius:6px;background:rgba(0,0,0,.22);color:var(--white);font-size:10px}
+@keyframes statusIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.page-footer{display:flex;justify-content:space-between;gap:20px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted-2);font-size:10px}
+
+@media(max-width:980px){
+  :root{--sidebar:220px}
+  .hero{grid-template-columns:1fr}
+  .hero-panel{min-height:auto}
+  .progress-wrap{width:145px}
+  .secondary-grid{grid-template-columns:1fr}
+  .secondary-row .file-name{margin-left:56px}
+}
+@media(max-width:760px){
+  :root{--sidebar:0px}
+  .sidebar{width:280px;transform:translateX(-100%);transition:transform .24s ease}
+  body.menu-open .sidebar{transform:translateX(0);box-shadow:30px 0 80px rgba(0,0,0,.55)}
+  body.menu-open::after{content:"";position:fixed;inset:0;z-index:35;background:rgba(0,0,0,.52)}
+  .main-shell{margin-left:0}
+  .mobile-menu{display:grid;place-items:center;flex:0 0 auto}
+  .topbar{padding:0 17px}
+  .topbar-title{display:none}
+  .topbar-tools{margin-left:auto}
+  .progress-wrap{width:125px}
+  .mode-chip{display:none}
+  .content-shell{padding:38px 18px 76px}
+  .hero{margin-bottom:36px;padding-bottom:36px}
+  h1{font-size:clamp(42px,12vw,58px)}
+  .row-2,.routing-grid{grid-template-columns:1fr}
+  .section-header{grid-template-columns:42px 1fr;padding:20px}
+  .section-status{display:none}
+  .section-body{padding:20px}
+  .priority-wrap{align-items:flex-start;flex-direction:column}
+  .submit-panel{bottom:12px;align-items:stretch;flex-direction:column;padding:15px}
+  button.primary{width:100%}
+}
+@media(max-width:520px){
+  .hero-panel{padding:19px;border-radius:19px}
+  .upload-zone{grid-template-columns:42px 1fr;min-height:142px;padding:17px}
+  .upload-icon{width:42px;height:42px}
+  .file-name{grid-column:1/-1;max-width:100%;text-align:left}
+  .slider-toggle .opt{font-size:11px;padding:7px}
+  .secondary-row{padding:14px}
+  .secondary-row .file-name{margin-left:0}
+  .page-footer{flex-direction:column;gap:4px}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<aside class="sidebar" aria-label="QC submission navigation">
+  <a class="brand-lockup" href="#intro" aria-label="2X Experience Design Solutions home">
+    <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjc2IDY3NCI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiNmZmY7fS5jbHMtMntmaWxsOiNmNTAwMDA7fTwvc3R5bGU+PC9kZWZzPjxwYXRoIGNsYXNzPSJjbHMtMiIgZD0ibTU1Ny45Myw3OS4wNmMtMTIuNjgtMjQuOC00MC4zMS00Mi4wMi03Mi4xMi00Mi4wMmwtMjQxLjk5LjA0aC01LjQ4di4wNGMtMTA4LjM4LDEuNjItMjAwLjE5LDY0LjI2LTIwMC4xOSwxNzcuMDRsLS4xNCwzLjI5di4zNWMwLDEwLjU1LDguMzUsMTkuMTcsMTguNzYsMTkuNzdsMTEwLjM3LS4xNGM5LjMxLTEuMTksMTYuNTktOC44MSwxNy4yNS0xOC4yNy4wMi0uMDEuMDQtLjAzLjA2LS4wNCw0LjAxLTM3LjQ3LDMzLjM4LTQ3LjM5LDU4LjE4LTQ3LjM5LDM3LjM0LDAsNTYuOSwyMi4wNCw1Ni45LDUzLjg3LDAsMjQuNDktOC44OSwzOS4xOC0zMi4wMSw2Mi4wM0w2My40NCw0OTEuNDFjLTE1LjUsMTUuNDItMjUuMTEsMzYuNzYtMjUuMTEsNjAuMzVsLjAyLDY1LjM2Yy0uMDIsMi41MS4yOCw1LjA1LDEuMyw3LjUyLDMuMTYsNy42MywxMC42LDEyLjIzLDE4LjQxLDEyLjI0bC4wNy4wN2g0MjguMmMzMS44MiwwLDU5LjE5LTE3LjIyLDcxLjg4LTQyLjAyaC4yNWw3OS40OC0xMjQuMDdWMjA0LjQxbC04MC0xMjUuMzZabS05OC4zLDQwMS43NmMtMTMuNzUsMjAuNzMtMzguNiwzNC45OC02Ni44OSwzNS4zNGgtMTUxLjE2Yy01Ljc1LDAtMTAuNDEtNC42Ni0xMC40MS0xMC40MiwwLTMuMDQsMS4yMi01LjcyLDMuMzEtNy41OWwxMzIuNjEtMTI4LjkxYzUwLjY4LTQ4Ljk3LDc4LjI0LTgxLjYyLDc4LjI0LTE0Mi44MywwLTEzLjQyLTEuMzUtMjYuMTYtMy44My0zOC4yM2wtLjE1LTEuNjhjMC0zLjI1LDIuNjQtNS44OSw1Ljg5LTUuODksMi4xNiwwLDMuOTYsMS4yMiw0Ljk5LDIuOTVsMTAxLjQzLDE1My40NC05NC4wMywxNDMuODJaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMTIxNy44LDU5Ni45N2gtMzE2LjcxYy0xMSwwLTIwLTktMjAtMjBzOC45OS0xOS45OSwxOS45OS0yMGgxMjYuNzVjMTEsMCwyMC05LDIwLTIwcy05LTIwLTIwLTIwaC0xNDQuNzJjLTI4LjI5LS4zNi01My4xMy0xNS40NC02Ni44OS0zNi4xN2wtOTQuMDMtMTQzLjgyLDU3LjUxLTg3YzUuMjUtNy44MSwxNC4xNi0xMi45NiwyNC4yOC0xMi45NmgxNTIuNzVjMTEsMCwyMC05LDIwLTIwcy05LTIwLTIwLTIwaC0xMDQuMDhjLTExLDAtMjAtOS0yMC0yMHM5LTIwLDIwLTIwaDM0NS41MmMxMSwwLDIwLTksMjAtMjBzLTktMjAtMjAtMjBoLTI5Ni4wNWMtMTEsMC0yMC05LTIwLTIwczktMjAsMjAtMjBoMTQyLjc4YzExLDAsMjAtOSwyMC0yMHMtOS0yMC0yMC0yMGwtMjU0Ljg2LS4wNGMtMzEuODIsMC01OS40NCwxNy4yMi03Mi4xMiw0Mi4wMmwtODAsMTI1LjM2djI2Ni40Nmw3OS40OCwxMjQuMDdoLjI1YzEyLjY4LDI0LjgsNDAuMDYsNDIuMDIsNzEuODgsNDIuMDJoNDI4LjI2YzExLDAsMjAtOSwyMC0yMHMtOS0yMC0yMC0yMFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im0xMjE3LjgsNTE2Ljk4aC0xMDkuMDJjLTExLDAtMjAsOS0yMCwyMHM5LDIwLDIwLDIwaDEwOS4wMmMxMSwwLDIwLTksMjAtMjBzLTktMjAtMjAtMjBaIi8+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJtMTAyNy40Nyw0NzYuOTloMTIyLjYxYzExLDAsMjAtOSwyMC0yMHMtOS0yMC0yMC0yMGgtMTIyLjYxYy0xMSwwLTIwLDktMjAsMjBzOSwyMCwyMCwyMFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im0xMTExLjEyLDE5Ny4wNWMtMTEsMC0yMCw5LTIwLDIwczksMjAsMjAsMjBoMTA2Ljg5YzExLDAsMjAtOSwyMC0yMHMtOS0yMC0yMC0yMGgtMTA2Ljg5WiIvPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0ibTk0Ni4wOSwzOTcuMDFoMTIyLjYxYzExLDAsMjAtOSwyMC0yMHMtOS0yMC0yMC0yMGgtMTIyLjYxYy0xMSwwLTIwLDktMjAsMjBzOSwyMCwyMCwyMFoiLz48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Im0xMDA5LjQ3LDI5Ny4wM2MwLTExLTktMjAtMjAtMjBoLTExOC41NmMtMTEsMC0yMCw5LTIwLDIwczksMjAsMjAsMjBoMTE4LjU2YzExLDAsMjAtOSwyMC0yMFoiLz48L3N2Zz4=" alt="2X">
+  </a>
+  <p class="sidebar-label">Submission flow</p>
+  <nav class="side-nav">
+    <button class="nav-item active" type="button" data-target="qc-type"><span>01</span><strong>QC type</strong></button>
+    <button class="nav-item" type="button" data-target="batch-details"><span>02</span><strong>Batch details</strong></button>
+    <button class="nav-item" type="button" data-target="master-source"><span>03</span><strong>Master source</strong></button>
+    <button class="nav-item" type="button" data-target="secondary-files"><span>04</span><strong>Secondary files</strong></button>
+    <button class="nav-item" type="button" data-target="routing"><span>05</span><strong>Routing</strong></button>
+  </nav>
+  <div class="sidebar-footer">
+    <strong><span class="live-dot"></span>Experience Design Solutions</strong>
+    Internal QC intake · n8n-ready
+  </div>
+</aside>
+
+<div class="main-shell">
+  <header class="topbar">
+    <button class="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+    <div class="topbar-title"><strong>QC Batch Submission</strong> · Multilingual and copy verification</div>
+    <div class="topbar-tools">
+      <span class="mode-chip" id="modeChip">Translation QC</span>
+      <div class="progress-wrap" aria-label="Form section progress">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <span class="progress-text" id="progressText">01 / 05</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="content-shell">
+    <section class="hero" id="intro" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">Experience Design Solutions · QC Agent</p>
+        <h1 id="pageTitle">Submit assets for quality control.</h1>
+        <p class="lede">Compare localised or same-language creative against an approved source, then route borderline findings to a nominated reviewer in Teams.</p>
+      </div>
+      <aside class="hero-panel" aria-label="QC workflow summary">
+        <div class="hero-panel-head"><strong>Automated QC workflow</strong><span>Human-in-the-loop</span></div>
+        <div class="process-list">
+          <div class="process-item"><span class="process-index">01</span><div class="process-copy"><strong>Submit source and variants</strong><span>PDF or PNG · up to 25 MB each</span></div><span class="process-state">Input</span></div>
+          <div class="process-item"><span class="process-index">02</span><div class="process-copy"><strong>Run automated checks</strong><span>Content, consistency and localisation</span></div><span class="process-state">Agent</span></div>
+          <div class="process-item"><span class="process-index">03</span><div class="process-copy"><strong>Escalate exceptions</strong><span>Reviewer receives borderline findings</span></div><span class="process-state">HITL</span></div>
+        </div>
+      </aside>
+    </section>
+
+    <form id="qcForm" novalidate>
+      <fieldset class="form-section" id="qc-type">
+        <div class="section-header">
+          <span class="section-number">01</span>
+          <div><h2 class="section-title">Choose the QC method</h2><p class="section-description">Select whether the workflow should compare translated designs or verify approved copy across same-language renditions.</p></div>
+          <span class="section-status">Required</span>
+        </div>
+        <div class="section-body">
+          <div class="field">
+            <div class="slider-toggle" id="qcTypeToggle" role="radiogroup" aria-label="QC type">
+              <span class="knob" aria-hidden="true"></span>
+              <input type="radio" name="qcType" id="qcTypeTranslation" value="translation" checked>
+              <label class="opt active" for="qcTypeTranslation" data-opt="translation">Translation QC</label>
+              <input type="radio" name="qcType" id="qcTypeCopy" value="copy">
+              <label class="opt" for="qcTypeCopy" data-opt="copy">Copy QC · same language</label>
+            </div>
+            <p class="mode-summary" id="qcTypeHint">Compares a master design against localised versions in other languages.</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section" id="batch-details">
+        <div class="section-header">
+          <span class="section-number">02</span>
+          <div><h2 class="section-title">Identify the batch</h2><p class="section-description">Use a clear project name and version so the submission can be traced in reporting, Teams and downstream approvals.</p></div>
+          <span class="section-status">Required</span>
+        </div>
+        <div class="section-body">
+          <div class="row-2">
+            <div class="field">
+              <label for="campaignName">Campaign or project name <span class="required">*</span></label>
+              <input type="text" id="campaignName" name="campaignName" required autocomplete="off" placeholder="e.g. Q3 Brand Refresh">
+              <p class="error-text">Campaign name is required.</p>
+            </div>
+            <div class="field">
+              <label for="batchVersion">Version</label>
+              <input type="text" id="batchVersion" name="batchVersion" autocomplete="off" placeholder="v1">
+              <p class="hint">Defaults to v1 when left blank.</p>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section mode-panel" id="master-source">
+        <div class="section-header">
+          <span class="section-number">03</span>
+          <div><h2 class="section-title" id="masterLegend">Add the master design</h2><p class="section-description" id="masterDescription">Upload the approved source that every localised asset should be checked against.</p></div>
+          <span class="section-status">Source of truth</span>
+        </div>
+        <div class="section-body">
+          <div class="field" id="masterFileField">
+            <label class="upload-zone" for="masterFile" id="masterUploadZone">
+              <input type="file" id="masterFile" accept=".pdf,.png">
+              <span class="upload-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
+              </span>
+              <span class="upload-copy"><strong>Drop the master file here or browse</strong><span>The approved PDF or PNG used as the source of truth.</span><span class="file-meta"><span>PDF / PNG</span><span>Max 25 MB</span></span></span>
+              <span class="file-name" id="masterFileName">No file selected</span>
+            </label>
+            <p class="error-text">A valid master PDF or PNG under 25 MB is required.</p>
+          </div>
+
+          <div class="field" id="masterCopyField" style="display:none;">
+            <label for="masterCopyText">Approved copy <span class="required">*</span></label>
+            <textarea id="masterCopyText" placeholder="Headline: Move faster, together.&#10;Body: 2X helps marketing teams ship campaigns in days, not weeks.&#10;CTA: Talk to us"></textarea>
+            <p class="hint">Paste as plain text, ideally one copy element per line.</p>
+            <p class="error-text">Paste the approved copy text before submitting.</p>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section mode-panel" id="secondary-files">
+        <div class="section-header">
+          <span class="section-number">04</span>
+          <div><h2 class="section-title">Add files to compare</h2><p class="section-description" id="secondaryHint">Add every localised version to check against the master and tag each with its locale code.</p></div>
+          <span class="section-status" id="comparisonCount">1 asset</span>
+        </div>
+        <div class="section-body">
+          <div id="secondaryRows"></div>
+          <button type="button" class="add-row-btn" id="addSecondaryRow">＋ Add another comparison file</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section" id="routing">
+        <div class="section-header">
+          <span class="section-number">05</span>
+          <div><h2 class="section-title">Set routing and context</h2><p class="section-description">Tell the workflow who submitted the batch, who should review exceptions and whether the request is time-sensitive.</p></div>
+          <span class="section-status">Approval route</span>
+        </div>
+        <div class="section-body">
+          <div class="routing-grid">
+            <div class="field">
+              <label for="submitterEmail">Your email <span class="required">*</span></label>
+              <input type="email" id="submitterEmail" name="submitterEmail" required autocomplete="email" placeholder="you@2x.com">
+              <p class="error-text">Enter a valid submitter email.</p>
+            </div>
+            <div class="field">
+              <label for="reviewerEmail">Reviewer email · Teams <span class="required">*</span></label>
+              <input type="email" id="reviewerEmail" name="reviewerEmail" required autocomplete="email" placeholder="reviewer@2x.com">
+              <p class="error-text">Enter a valid reviewer email.</p>
+            </div>
+          </div>
+
+          <div class="field priority-wrap">
+            <div class="priority-copy"><strong>Priority</strong><span>Urgent batches should only be used for genuine delivery risks.</span></div>
+            <div class="slider-toggle small" id="priorityToggle" style="--mode-accent:var(--red);" role="radiogroup" aria-label="Priority">
+              <span class="knob" aria-hidden="true"></span>
+              <input type="radio" name="priority" id="priorityStandard" value="standard" checked>
+              <label class="opt active" for="priorityStandard" data-opt="standard">Standard</label>
+              <input type="radio" name="priority" id="priorityUrgent" value="urgent">
+              <label class="opt" for="priorityUrgent" data-opt="urgent">Urgent</label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="notes">Reviewer notes <span class="hint">Optional</span></label>
+            <textarea id="notes" placeholder="Add useful context, such as intentionally untranslated legal copy, known exceptions or campaign-specific terminology."></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <div id="statusBox" role="status" aria-live="polite"></div>
+
+      <div class="submit-panel">
+        <div class="submit-summary">
+          <span class="submit-summary-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h12"/><path d="m12 6 6 6-6 6"/></svg></span>
+          <div><strong>Ready to start automated QC</strong><span id="submitSummaryText">Translation QC · 1 comparison asset</span></div>
+        </div>
+        <button type="submit" class="primary" id="submitBtn"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Submit batch for QC →</span></button>
+      </div>
+    </form>
+
+    <footer class="page-footer"><span>2X Experience Design Solutions · Internal tool</span><span>Accepted formats: PDF, PNG · Maximum 25 MB per file</span></footer>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // Replace this value before production deployment.
+  const WEBHOOK_URL = "REPLACE_WITH_YOUR_N8N_PRODUCTION_WEBHOOK_URL";
+  const MAX_FILE_MB = 25;
+  const ACCEPTED_TYPES = [".pdf", ".png"];
+
+  const form = document.getElementById("qcForm");
+  const qcTypeToggle = document.getElementById("qcTypeToggle");
+  const priorityToggle = document.getElementById("priorityToggle");
+  const masterLegend = document.getElementById("masterLegend");
+  const masterDescription = document.getElementById("masterDescription");
+  const masterFileField = document.getElementById("masterFileField");
+  const masterCopyField = document.getElementById("masterCopyField");
+  const masterFileInput = document.getElementById("masterFile");
+  const masterCopyText = document.getElementById("masterCopyText");
+  const qcTypeHint = document.getElementById("qcTypeHint");
+  const secondaryHint = document.getElementById("secondaryHint");
+  const secondaryRows = document.getElementById("secondaryRows");
+  const addSecondaryRow = document.getElementById("addSecondaryRow");
+  const comparisonCount = document.getElementById("comparisonCount");
+  const submitSummaryText = document.getElementById("submitSummaryText");
+  const modeChip = document.getElementById("modeChip");
+  const submitBtn = document.getElementById("submitBtn");
+  const statusBox = document.getElementById("statusBox");
+  let rowCounter = 0;
+
+  function currentQcType(){
+    return document.querySelector('input[name="qcType"]:checked').value;
+  }
+
+  function applyToggleVisuals(toggleEl){
+    const checked = toggleEl.querySelector("input:checked");
+    if(!checked) return;
+    toggleEl.querySelectorAll(".opt").forEach(opt => opt.classList.remove("active"));
+    const activeLabel = toggleEl.querySelector(`label[for="${checked.id}"]`);
+    if(activeLabel) activeLabel.classList.add("active");
+    const inputs = Array.from(toggleEl.querySelectorAll("input"));
+    toggleEl.classList.toggle("right", inputs.indexOf(checked) === 1);
+  }
+
+  function bindToggle(toggleEl, onChange){
+    toggleEl.addEventListener("change", () => {
+      applyToggleVisuals(toggleEl);
+      if(onChange) onChange();
+    });
+    toggleEl.querySelectorAll("label").forEach(label => {
+      label.addEventListener("click", () => {
+        const input = document.getElementById(label.htmlFor);
+        input.checked = true;
+        toggleEl.dispatchEvent(new Event("change"));
+      });
+    });
+  }
+
+  function setMode(qcType){
+    const root = document.documentElement;
+    const translation = qcType === "translation";
+    root.style.setProperty("--mode-accent", translation ? "var(--blue)" : "var(--purple)");
+    masterLegend.textContent = translation ? "Add the master design" : "Add the approved copy";
+    masterDescription.textContent = translation
+      ? "Upload the approved source that every localised asset should be checked against."
+      : "Paste the approved wording that every same-language creative rendition should contain.";
+    masterFileField.style.display = translation ? "" : "none";
+    masterCopyField.style.display = translation ? "none" : "";
+    translation ? masterFileInput.setAttribute("required", "required") : masterFileInput.removeAttribute("required");
+    translation ? masterCopyText.removeAttribute("required") : masterCopyText.setAttribute("required", "required");
+    qcTypeHint.textContent = translation
+      ? "Compares a master design against localised versions in other languages."
+      : "Compares approved copy text against other design renditions in the same language.";
+    secondaryHint.textContent = translation
+      ? "Add every localised version to check against the master and tag each with its locale code."
+      : "Add every design rendition that should contain this copy and tag each with a short asset label.";
+    modeChip.textContent = translation ? "Translation QC" : "Copy QC";
+    document.querySelectorAll(".secondary-row .tag-input").forEach(input => {
+      input.placeholder = translation ? "e.g. fr-FR" : "e.g. IG_Story";
+    });
+    updateSummary();
+  }
+
+  function validFileType(file){
+    const name = file.name.toLowerCase();
+    return ACCEPTED_TYPES.some(ext => name.endsWith(ext));
+  }
+
+  function validFile(file){
+    return !!file && validFileType(file) && file.size <= MAX_FILE_MB * 1024 * 1024;
+  }
+
+  function formatBytes(bytes){
+    if(bytes < 1024) return `${bytes} B`;
+    if(bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  }
+
+  function updateFileDisplay(input, display){
+    const file = input.files && input.files[0];
+    if(file){
+      display.textContent = `${file.name} · ${formatBytes(file.size)}`;
+      display.title = file.name;
+      display.classList.add("has-file");
+    }else{
+      display.textContent = "No file selected";
+      display.removeAttribute("title");
+      display.classList.remove("has-file");
+    }
+  }
+
+  function setupUploadZone(zone, input, display){
+    input.addEventListener("change", () => {
+      updateFileDisplay(input, display);
+      showFieldError(input, false);
+    });
+    ["dragenter","dragover"].forEach(type => zone.addEventListener(type, event => {
+      event.preventDefault();
+      zone.classList.add("dragover");
+    }));
+    ["dragleave","drop"].forEach(type => zone.addEventListener(type, event => {
+      event.preventDefault();
+      zone.classList.remove("dragover");
+    }));
+    zone.addEventListener("drop", event => {
+      const file = event.dataTransfer.files && event.dataTransfer.files[0];
+      if(!file) return;
+      const transfer = new DataTransfer();
+      transfer.items.add(file);
+      input.files = transfer.files;
+      input.dispatchEvent(new Event("change", {bubbles:true}));
+    });
+  }
+
+  function updateRowIndexes(){
+    Array.from(secondaryRows.children).forEach((row,index) => {
+      row.querySelector(".asset-index").textContent = String(index + 1).padStart(2,"0");
+      row.querySelector(".secondary-row-label").textContent = `Comparison asset ${String(index + 1).padStart(2,"0")}`;
+    });
+    updateSummary();
+  }
+
+  function updateSummary(){
+    const count = secondaryRows.children.length || 1;
+    const label = count === 1 ? "1 asset" : `${count} assets`;
+    comparisonCount.textContent = label;
+    submitSummaryText.textContent = `${currentQcType() === "translation" ? "Translation QC" : "Copy QC"} · ${count} comparison ${count === 1 ? "asset" : "assets"}`;
+  }
+
+  function makeRow(){
+    rowCounter += 1;
+    const uid = `secondaryFile_${rowCounter}`;
+    const row = document.createElement("div");
+    row.className = "secondary-row";
+    row.innerHTML = `
+      <div class="secondary-row-head">
+        <div class="secondary-row-title"><span class="asset-index">${String(rowCounter).padStart(2,"0")}</span><span class="secondary-row-label">Comparison asset ${String(rowCounter).padStart(2,"0")}</span></div>
+        <button type="button" class="remove-row" aria-label="Remove this comparison file" title="Remove">×</button>
+      </div>
+      <div class="secondary-grid">
+        <div>
+          <label class="upload-zone" for="${uid}">
+            <input type="file" id="${uid}" class="file-input" accept=".pdf,.png" aria-label="Secondary file">
+            <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg></span>
+            <span class="upload-copy"><strong>Drop a file or browse</strong><span>PDF or PNG · maximum 25 MB</span></span>
+            <span class="file-name">No file selected</span>
+          </label>
+          <p class="error-text">Choose a PDF or PNG under 25 MB.</p>
+        </div>
+        <div class="field tag-field">
+          <label for="${uid}_tag">${currentQcType() === "translation" ? "Locale code" : "Asset label"} <span class="required">*</span></label>
+          <input type="text" id="${uid}_tag" class="tag-input" placeholder="${currentQcType() === "translation" ? "e.g. fr-FR" : "e.g. IG_Story"}" autocomplete="off">
+          <p class="error-text">This tag is required.</p>
+          <p class="hint">Used to identify the result in reporting.</p>
+        </div>
+      </div>`;
+
+    const fileInput = row.querySelector(".file-input");
+    const zone = row.querySelector(".upload-zone");
+    const display = row.querySelector(".file-name");
+    setupUploadZone(zone,fileInput,display);
+
+    row.querySelector(".remove-row").addEventListener("click", () => {
+      if(secondaryRows.children.length > 1){
+        row.remove();
+        updateRowIndexes();
+      }else{
+        fileInput.value = "";
+        row.querySelector(".tag-input").value = "";
+        updateFileDisplay(fileInput,display);
+        showFieldError(fileInput,false);
+        showFieldError(row.querySelector(".tag-input"),false);
+      }
+    });
+    return row;
+  }
+
+  function addRow(){
+    secondaryRows.appendChild(makeRow());
+    updateRowIndexes();
+  }
+
+  function showFieldError(input,show){
+    input.classList.toggle("invalid",show);
+    const wrapper = input.closest(".field") || input.closest(".secondary-grid > div") || input.parentElement;
+    const error = wrapper ? wrapper.querySelector(".error-text") : null;
+    if(error) error.classList.toggle("show",show);
+  }
+
+  function validate(){
+    let ok = true;
+    const campaignName = document.getElementById("campaignName");
+    const submitterEmail = document.getElementById("submitterEmail");
+    const reviewerEmail = document.getElementById("reviewerEmail");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const campaignOk = !!campaignName.value.trim();
+    showFieldError(campaignName,!campaignOk);
+    ok = campaignOk && ok;
+
+    const submitterOk = emailPattern.test(submitterEmail.value.trim());
+    showFieldError(submitterEmail,!submitterOk);
+    ok = submitterOk && ok;
+
+    const reviewerOk = emailPattern.test(reviewerEmail.value.trim());
+    showFieldError(reviewerEmail,!reviewerOk);
+    ok = reviewerOk && ok;
+
+    if(currentQcType() === "translation"){
+      const masterOk = validFile(masterFileInput.files[0]);
+      showFieldError(masterFileInput,!masterOk);
+      ok = masterOk && ok;
+    }else{
+      const copyOk = !!masterCopyText.value.trim();
+      showFieldError(masterCopyText,!copyOk);
+      ok = copyOk && ok;
+    }
+
+    Array.from(secondaryRows.children).forEach(row => {
+      const fileInput = row.querySelector(".file-input");
+      const tagInput = row.querySelector(".tag-input");
+      const fileOk = validFile(fileInput.files[0]);
+      const tagOk = !!tagInput.value.trim();
+      showFieldError(fileInput,!fileOk);
+      showFieldError(tagInput,!tagOk);
+      ok = fileOk && tagOk && ok;
+    });
+
+    if(!ok){
+      const firstInvalid = form.querySelector(".invalid");
+      if(firstInvalid){
+        const section = firstInvalid.closest(".form-section");
+        if(section) section.scrollIntoView({behavior:"smooth",block:"center"});
+      }
+    }
+    return ok;
+  }
+
+  function setStatus(kind,title,message,batchId){
+    statusBox.className = `show ${kind}`;
+    statusBox.replaceChildren();
+    const strong = document.createElement("strong");
+    strong.textContent = title;
+    const paragraph = document.createElement("p");
+    paragraph.textContent = message;
+    statusBox.append(strong,paragraph);
+    if(batchId){
+      const code = document.createElement("code");
+      code.textContent = `Batch ID: ${batchId}`;
+      statusBox.append(code);
+    }
+    statusBox.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+
+  function resetFileDisplays(){
+    updateFileDisplay(masterFileInput,document.getElementById("masterFileName"));
+    document.querySelectorAll(".secondary-row").forEach(row => updateFileDisplay(row.querySelector(".file-input"),row.querySelector(".file-name")));
+  }
+
+  bindToggle(qcTypeToggle,() => setMode(currentQcType()));
+  bindToggle(priorityToggle);
+  setupUploadZone(document.getElementById("masterUploadZone"),masterFileInput,document.getElementById("masterFileName"));
+  addSecondaryRow.addEventListener("click",addRow);
+  addRow();
+  applyToggleVisuals(priorityToggle);
+  setMode("translation");
+
+  form.addEventListener("input",event => {
+    if(event.target.matches("input[type=text],input[type=email],textarea")) showFieldError(event.target,false);
+  });
+
+  form.addEventListener("submit",async event => {
+    event.preventDefault();
+
+    if(WEBHOOK_URL.startsWith("REPLACE_WITH")){
+      setStatus("error","Webhook not configured","Replace the WEBHOOK_URL constant in the page source with your active n8n production webhook before using this form.");
+      return;
+    }
+
+    if(!validate()){
+      setStatus("error","Check the highlighted fields","Some required information is missing, unsupported or above the 25 MB file limit.");
+      return;
+    }
+
+    const qcType = currentQcType();
+    const data = new FormData();
+    data.append("qcType",qcType);
+    data.append("campaignName",document.getElementById("campaignName").value.trim());
+    data.append("batchVersion",document.getElementById("batchVersion").value.trim() || "v1");
+    data.append("submitterEmail",document.getElementById("submitterEmail").value.trim());
+    data.append("reviewerEmail",document.getElementById("reviewerEmail").value.trim());
+    data.append("priority",document.querySelector('input[name="priority"]:checked').value);
+    data.append("notes",document.getElementById("notes").value.trim());
+
+    if(qcType === "translation") data.append("masterFile",masterFileInput.files[0]);
+    else data.append("masterCopyText",masterCopyText.value.trim());
+
+    const tags = [];
+    Array.from(secondaryRows.children).forEach((row,index) => {
+      data.append(`secondaryFile_${index}`,row.querySelector(".file-input").files[0]);
+      tags.push(row.querySelector(".tag-input").value.trim());
+    });
+    data.append("tags",JSON.stringify(tags));
+
+    submitBtn.disabled = true;
+    submitBtn.classList.add("loading");
+    statusBox.className = "";
+
+    try{
+      const response = await fetch(WEBHOOK_URL,{method:"POST",body:data});
+      const contentType = response.headers.get("content-type") || "";
+      const payload = contentType.includes("application/json") ? await response.json() : {message:await response.text()};
+      if(response.ok){
+        setStatus("success","Batch submitted",payload.message || "Processing has started and exceptions will be routed to the nominated reviewer.",payload.batchId || "n/a");
+        form.reset();
+        secondaryRows.replaceChildren();
+        rowCounter = 0;
+        addRow();
+        document.getElementById("qcTypeTranslation").checked = true;
+        document.getElementById("priorityStandard").checked = true;
+        applyToggleVisuals(qcTypeToggle);
+        applyToggleVisuals(priorityToggle);
+        setMode("translation");
+        resetFileDisplays();
+      }else{
+        setStatus("error",`Submission failed (${response.status})`,payload.message || "The workflow rejected this batch. Check that the submitted field names match the n8n webhook configuration.");
+      }
+    }catch(error){
+      setStatus("error","Could not reach the workflow",`Check that the n8n workflow is active and allows requests from this page origin. Details: ${error.message}`);
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.classList.remove("loading");
+    }
+  });
+
+  // Sidebar navigation and scroll progress.
+  const navItems = Array.from(document.querySelectorAll(".nav-item"));
+  const sections = navItems.map(item => document.getElementById(item.dataset.target));
+  const progressFill = document.getElementById("progressFill");
+  const progressText = document.getElementById("progressText");
+  function setActiveSection(index){
+    navItems.forEach((item,itemIndex) => item.classList.toggle("active",itemIndex === index));
+    progressFill.style.width = `${((index + 1) / sections.length) * 100}%`;
+    progressText.textContent = `${String(index + 1).padStart(2,"0")} / ${String(sections.length).padStart(2,"0")}`;
+  }
+  navItems.forEach((item,index) => item.addEventListener("click",() => {
+    sections[index].scrollIntoView({behavior:"smooth",block:"start"});
+    setActiveSection(index);
+    document.body.classList.remove("menu-open");
+    document.querySelector(".mobile-menu").setAttribute("aria-expanded","false");
+  }));
+  const observer = new IntersectionObserver(entries => {
+    const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+    if(visible){
+      const index = sections.indexOf(visible.target);
+      if(index >= 0) setActiveSection(index);
+    }
+  },{rootMargin:"-25% 0px -58% 0px",threshold:[0,.15,.35,.6]});
+  sections.forEach(section => observer.observe(section));
+
+  const menuButton = document.querySelector(".mobile-menu");
+  menuButton.addEventListener("click",() => {
+    const open = document.body.classList.toggle("menu-open");
+    menuButton.setAttribute("aria-expanded",String(open));
+  });
+  document.addEventListener("click",event => {
+    if(document.body.classList.contains("menu-open") && !event.target.closest(".sidebar") && !event.target.closest(".mobile-menu")){
+      document.body.classList.remove("menu-open");
+      menuButton.setAttribute("aria-expanded","false");
+    }
+  });
+})();
+</script>
+</body>
+</html>
