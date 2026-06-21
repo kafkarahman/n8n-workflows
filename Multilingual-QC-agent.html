@@ -538,13 +538,13 @@ button.primary.loading .btn-label{display:none}
         <div class="section-body">
           <div class="routing-grid">
             <div class="field">
-              <label for="submitterEmail">Your name <span class="required">*</span></label>
-              <input type="email" id="submitterEmail" name="submitterEmail" required autocomplete="email" placeholder="john@2x.com">
-              <p class="error-text">Enter your email.</p>
+              <label for="submitterName">Your name <span class="required">*</span></label>
+              <input type="text" id="submitterName" name="submitterName" required autocomplete="name" placeholder="e.g. John Smith">
+              <p class="error-text">Enter your name.</p>
             </div>
             <div class="field">
-              <label for="reviewerEmail">Your email <span class="required">*</span></label>
-              <input type="email" id="reviewerEmail" name="reviewerEmail" required autocomplete="email" placeholder="you@2x.com">
+              <label for="submitterEmail">Your email <span class="required">*</span></label>
+              <input type="email" id="submitterEmail" name="submitterEmail" required autocomplete="email" placeholder="you@2x.com">
               <p class="error-text">Enter a valid email.</p>
             </div>
           </div>
@@ -796,21 +796,21 @@ button.primary.loading .btn-label{display:none}
   function validate(){
     let ok = true;
     const campaignName = document.getElementById("campaignName");
+    const submitterName = document.getElementById("submitterName");
     const submitterEmail = document.getElementById("submitterEmail");
-    const reviewerEmail = document.getElementById("reviewerEmail");
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const campaignOk = !!campaignName.value.trim();
     showFieldError(campaignName,!campaignOk);
     ok = campaignOk && ok;
 
+    const submitterNameOk = !!submitterName.value.trim();
+    showFieldError(submitterName,!submitterNameOk);
+    ok = submitterNameOk && ok;
+
     const submitterEmailOk = emailPattern.test(submitterEmail.value.trim());
     showFieldError(submitterEmail,!submitterEmailOk);
     ok = submitterEmailOk && ok;
-
-    const reviewerOk = emailPattern.test(reviewerEmail.value.trim());
-    showFieldError(reviewerEmail,!reviewerOk);
-    ok = reviewerOk && ok;
 
     if(currentQcType() === "translation"){
       const masterOk = validFile(masterFileInput.files[0]);
@@ -906,6 +906,7 @@ button.primary.loading .btn-label{display:none}
     data.append("qcType",qcType);
     data.append("campaignName",document.getElementById("campaignName").value.trim());
     data.append("batchVersion",document.getElementById("batchVersion").value.trim() || "v1");
+    data.append("submitterName",document.getElementById("submitterName").value.trim());
     data.append("submitterEmail",document.getElementById("submitterEmail").value.trim());
     data.append("reviewerEmail",document.getElementById("reviewerEmail").value.trim());
     data.append("priority",document.querySelector('input[name="priority"]:checked').value);
