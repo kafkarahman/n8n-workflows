@@ -522,9 +522,9 @@ button.primary.loading .btn-label{display:none}
         <div class="section-body">
           <div class="routing-grid">
             <div class="field">
-              <label for="submitterName">Name <span class="required">*</span></label>
-              <input type="text" id="submitterName" name="submitterName" required autocomplete="name" placeholder="Your name">
-              <p class="error-text">Enter your name.</p>
+              <label for="submitterEmail">Your email <span class="required">*</span></label>
+              <input type="email" id="submitterEmail" name="submitterEmail" required autocomplete="email" placeholder="you@2x.com">
+              <p class="error-text">Enter your email.</p>
             </div>
             <div class="field">
               <label for="reviewerEmail">Your email <span class="required">*</span></label>
@@ -777,7 +777,7 @@ button.primary.loading .btn-label{display:none}
   function validate(){
     let ok = true;
     const campaignName = document.getElementById("campaignName");
-    const submitterName = document.getElementById("submitterName");
+    const submitterEmail = document.getElementById("submitterEmail");
     const reviewerEmail = document.getElementById("reviewerEmail");
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -785,9 +785,9 @@ button.primary.loading .btn-label{display:none}
     showFieldError(campaignName,!campaignOk);
     ok = campaignOk && ok;
 
-    const submitterNameOk = !!submitterName.value.trim();
-    showFieldError(submitterName,!submitterNameOk);
-    ok = submitterNameOk && ok;
+    const submitterEmailOk = emailPattern.test(submitterEmail.value.trim());
+    showFieldError(submitterEmail,!submitterEmailOk);
+    ok = submitterEmailOk && ok;
 
     const reviewerOk = emailPattern.test(reviewerEmail.value.trim());
     showFieldError(reviewerEmail,!reviewerOk);
@@ -874,7 +874,7 @@ button.primary.loading .btn-label{display:none}
     data.append("qcType",qcType);
     data.append("campaignName",document.getElementById("campaignName").value.trim());
     data.append("batchVersion",document.getElementById("batchVersion").value.trim() || "v1");
-    data.append("submitterName",document.getElementById("submitterName").value.trim());
+    data.append("submitterEmail",document.getElementById("submitterEmail").value.trim());
     data.append("reviewerEmail",document.getElementById("reviewerEmail").value.trim());
     data.append("priority",document.querySelector('input[name="priority"]:checked').value);
     data.append("notes",document.getElementById("notes").value.trim());
