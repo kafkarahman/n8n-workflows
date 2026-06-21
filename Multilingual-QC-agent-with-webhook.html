@@ -516,20 +516,20 @@ button.primary.loading .btn-label{display:none}
       <fieldset class="form-section" id="routing">
         <div class="section-header">
           <span class="section-number">05</span>
-          <div><h2 class="section-title">Set routing and context</h2><p class="section-description">Tell the workflow who submitted the batch, who should review exceptions and whether the request is time-sensitive.</p></div>
+          <div><h2 class="section-title">Set routing and context</h2><p class="section-description">Tell the workflow who submitted the batch, which email should receive QC exceptions and whether the request is time-sensitive.</p></div>
           <span class="section-status">Approval route</span>
         </div>
         <div class="section-body">
           <div class="routing-grid">
             <div class="field">
-              <label for="submitterEmail">Your email <span class="required">*</span></label>
-              <input type="email" id="submitterEmail" name="submitterEmail" required autocomplete="email" placeholder="you@2x.com">
-              <p class="error-text">Enter a valid submitter email.</p>
+              <label for="submitterName">Name <span class="required">*</span></label>
+              <input type="text" id="submitterName" name="submitterName" required autocomplete="name" placeholder="Your name">
+              <p class="error-text">Enter your name.</p>
             </div>
             <div class="field">
-              <label for="reviewerEmail">Reviewer email · Teams <span class="required">*</span></label>
-              <input type="email" id="reviewerEmail" name="reviewerEmail" required autocomplete="email" placeholder="reviewer@2x.com">
-              <p class="error-text">Enter a valid reviewer email.</p>
+              <label for="reviewerEmail">Your email <span class="required">*</span></label>
+              <input type="email" id="reviewerEmail" name="reviewerEmail" required autocomplete="email" placeholder="you@2x.com">
+              <p class="error-text">Enter a valid email.</p>
             </div>
           </div>
 
@@ -570,8 +570,8 @@ button.primary.loading .btn-label{display:none}
 (function(){
   "use strict";
 
-  // Replace this value before production deployment.
-  const WEBHOOK_URL = "REPLACE_WITH_YOUR_N8N_PRODUCTION_WEBHOOK_URL";
+  // n8n webhook endpoint for QC batch intake.
+  const WEBHOOK_URL = "https://ai-lab-2x.app.n8n.cloud/webhook/qc-batch-intake";
   const MAX_FILE_MB = 25;
   const ACCEPTED_TYPES = [".pdf", ".png"];
 
@@ -777,7 +777,7 @@ button.primary.loading .btn-label{display:none}
   function validate(){
     let ok = true;
     const campaignName = document.getElementById("campaignName");
-    const submitterEmail = document.getElementById("submitterEmail");
+    const submitterName = document.getElementById("submitterName");
     const reviewerEmail = document.getElementById("reviewerEmail");
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -785,9 +785,9 @@ button.primary.loading .btn-label{display:none}
     showFieldError(campaignName,!campaignOk);
     ok = campaignOk && ok;
 
-    const submitterOk = emailPattern.test(submitterEmail.value.trim());
-    showFieldError(submitterEmail,!submitterOk);
-    ok = submitterOk && ok;
+    const submitterNameOk = !!submitterName.value.trim();
+    showFieldError(submitterName,!submitterNameOk);
+    ok = submitterNameOk && ok;
 
     const reviewerOk = emailPattern.test(reviewerEmail.value.trim());
     showFieldError(reviewerEmail,!reviewerOk);
@@ -874,7 +874,7 @@ button.primary.loading .btn-label{display:none}
     data.append("qcType",qcType);
     data.append("campaignName",document.getElementById("campaignName").value.trim());
     data.append("batchVersion",document.getElementById("batchVersion").value.trim() || "v1");
-    data.append("submitterEmail",document.getElementById("submitterEmail").value.trim());
+    data.append("submitterName",document.getElementById("submitterName").value.trim());
     data.append("reviewerEmail",document.getElementById("reviewerEmail").value.trim());
     data.append("priority",document.querySelector('input[name="priority"]:checked').value);
     data.append("notes",document.getElementById("notes").value.trim());
