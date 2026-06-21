@@ -494,22 +494,22 @@ button.primary.loading .btn-label{display:none}
 
           <div class="field" id="masterCopyField" style="display:none;">
             <label>Approved copy <span class="required">*</span></label>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+            <div style="display:grid;gap:16px;margin-bottom:16px;">
               <div>
-                <label class="upload-zone" for="masterCopyFile" id="masterCopyUploadZone">
+                <label for="masterCopyText" style="display:block;margin-bottom:8px;color:var(--soft);font-size:12px;font-weight:650;">Paste approved text</label>
+                <textarea id="masterCopyText" placeholder="Headline: Move faster, together.&#10;Body: 2X helps marketing teams ship campaigns in days, not weeks.&#10;CTA: Talk to us" style="height:120px;"></textarea>
+                <p class="hint">One copy element per line.</p>
+              </div>
+              <div>
+                <label class="upload-zone" for="masterCopyFile" id="masterCopyUploadZone" style="min-height:140px;">
                   <input type="file" id="masterCopyFile" accept=".pdf,.png">
                   <span class="upload-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
                   </span>
-                  <span class="upload-copy"><strong>Upload document</strong><span>Extract copy from a PDF or image.</span><span class="file-meta"><span>PDF / PNG</span><span>Max 25 MB</span></span></span>
+                  <span class="upload-copy"><strong>Or upload document</strong><span>Extract copy from a PDF or image.</span><span class="file-meta"><span>PDF / PNG</span><span>Max 25 MB</span></span></span>
                   <span class="file-name" id="masterCopyFileName">No file selected</span>
                 </label>
                 <p class="error-text" id="masterCopyFileError">A valid PDF or PNG under 25 MB is required if uploading.</p>
-              </div>
-              <div>
-                <label for="masterCopyText" style="display:block;margin-bottom:8px;color:var(--soft);font-size:12px;font-weight:650;">Or paste text</label>
-                <textarea id="masterCopyText" placeholder="Headline: Move faster, together.&#10;Body: 2X helps marketing teams ship campaigns in days, not weeks.&#10;CTA: Talk to us" style="height:152px;"></textarea>
-                <p class="hint">One copy element per line.</p>
               </div>
             </div>
             <p class="error-text" id="masterCopyError">Paste the approved copy text or upload a document before submitting.</p>
