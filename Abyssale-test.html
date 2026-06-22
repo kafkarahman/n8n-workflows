@@ -239,8 +239,7 @@ button.primary.loading .btn-label{display:none}
     <button class="nav-item active" type="button" data-target="creative-brief"><span>01</span><strong>Creative brief</strong></button>
     <button class="nav-item" type="button" data-target="reference-material"><span>02</span><strong>Reference material</strong></button>
     <button class="nav-item" type="button" data-target="abyssale-template"><span>03</span><strong>Abyssale template</strong></button>
-    <button class="nav-item" type="button" data-target="delivery"><span>04</span><strong>Delivery</strong></button>
-    <button class="nav-item" type="button" data-target="results"><span>05</span><strong>Generated result</strong></button>
+    <button class="nav-item" type="button" data-target="results"><span>04</span><strong>Generated result</strong></button>
   </nav>
   <div class="sidebar-footer"><strong><span class="live-dot"></span>Experience Design Solutions</strong>Abyssale validation · n8n-ready</div>
 </aside>
@@ -248,10 +247,10 @@ button.primary.loading .btn-label{display:none}
 <div class="main-shell">
   <header class="topbar">
     <button class="mobile-menu" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
-    <div class="topbar-title"><strong>Abyssale Pipeline Test</strong> · Gemini → Abyssale → Email</div>
+    <div class="topbar-title"><strong>Abyssale Pipeline Test</strong> · Gemini → Abyssale → Teams</div>
     <div class="topbar-tools">
       <span class="mode-chip">Pipeline test</span>
-      <div class="progress-wrap" aria-label="Form section progress"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><span class="progress-text" id="progressText">01 / 05</span></div>
+      <div class="progress-wrap" aria-label="Form section progress"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><span class="progress-text" id="progressText">01 / 04</span></div>
     </div>
   </header>
 
@@ -260,14 +259,14 @@ button.primary.loading .btn-label{display:none}
       <div>
         <p class="eyebrow">Experience Design Solutions · Creative Automation</p>
         <h1 id="pageTitle">Validate the Abyssale layer before scaling it.</h1>
-        <p class="lede">One brief, one render. Submit a single creative through the connected n8n workflow — Gemini writes the copy and generates a visual, Abyssale layers both onto your template, and the result is emailed back. Built to test template behaviour before this runs at volume.</p>
+        <p class="lede">One brief, one render. Submit a single creative through the connected n8n workflow — Gemini writes the copy and generates a visual, Abyssale layers both onto your template, and the result is posted to your Teams channel. Built to test template behaviour before this runs at volume.</p>
       </div>
       <aside class="hero-panel" aria-label="Pipeline summary">
         <div class="hero-panel-head"><strong>Connected test workflow</strong><span>Single asset</span></div>
         <div class="process-list">
           <div class="process-item"><span class="process-index">01</span><div class="process-copy"><strong>Submit the brief</strong><span>Brand, product, references and template</span></div><span class="process-state">Input</span></div>
           <div class="process-item"><span class="process-index">02</span><div class="process-copy"><strong>Gemini + Abyssale generate</strong><span>Copy, visual and template layering</span></div><span class="process-state">Workflow</span></div>
-          <div class="process-item"><span class="process-index">03</span><div class="process-copy"><strong>Review the result</strong><span>Confirmation here, render by email</span></div><span class="process-state">Output</span></div>
+          <div class="process-item"><span class="process-index">03</span><div class="process-copy"><strong>Review the result</strong><span>Confirmation here, posted to Teams</span></div><span class="process-state">Output</span></div>
         </div>
       </aside>
     </section>
@@ -329,20 +328,13 @@ button.primary.loading .btn-label{display:none}
         </div>
       </fieldset>
 
-      <fieldset class="form-section" id="delivery">
-        <div class="section-header"><span class="section-number">04</span><div><h2 class="section-title">Delivery</h2><p class="section-description">Where the rendered creative gets sent once Abyssale finishes.</p></div><span class="section-status">Required</span></div>
-        <div class="section-body">
-          <div class="field"><label for="recipientEmail">Send result to <span class="required">*</span></label><input type="email" id="recipientEmail" name="recipientEmail" required placeholder="you@yourcompany.com"><p class="error-text">Add an email address for the result.</p></div>
-        </div>
-      </fieldset>
-
       <fieldset class="form-section" id="results">
-        <div class="section-header"><span class="section-number">05</span><div><h2 class="section-title">Generated result</h2><p class="section-description">What the workflow reports back after the render completes.</p></div><span class="section-status" id="resultStatus">Awaiting submission</span></div>
+        <div class="section-header"><span class="section-number">04</span><div><h2 class="section-title">Generated result</h2><p class="section-description">What the workflow reports back after the render completes.</p></div><span class="section-status" id="resultStatus">Awaiting submission</span></div>
         <div class="section-body results-shell">
-          <div class="empty-results" id="emptyResults"><div><span class="empty-results-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7 16 3.5-4 3 3 2.5-3 2 4"/><circle cx="9" cy="8.5" r="1.2"/></svg></span><strong>Nothing generated yet.</strong><p>Submit the brief to run this through Gemini and Abyssale. The headline and caption will appear here; the rendered creative arrives by email.</p></div></div>
+          <div class="empty-results" id="emptyResults"><div><span class="empty-results-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="m7 16 3.5-4 3 3 2.5-3 2 4"/><circle cx="9" cy="8.5" r="1.2"/></svg></span><strong>Nothing generated yet.</strong><p>Submit the brief to run this through Gemini and Abyssale. The headline and caption will appear here; the rendered creative is posted to your Teams channel.</p></div></div>
           <div class="processing-box" id="processingBox"><div><div class="processing-spinner"></div><strong>Running the pipeline</strong><p id="processingText">Gemini copy, Gemini image, then Abyssale render. This can take 10–30 seconds.</p></div></div>
           <div id="resultCardWrap"></div>
-          <div class="config-note">Before using this page, replace <code>YOUR-N8N-HOST</code> in the <code>WEBHOOK_URL</code> constant near the top of the page source with your active n8n production host — there's no field for it in the interface on purpose. This response shape depends on the "Respond Success" node in n8n. By default it returns <code>headline</code> and <code>caption</code> only — the rendered file goes out by email, not back to this page. If you want an inline preview here, have that node also return <code>assetUrl</code> (or <code>base64</code> + <code>mimeType</code>).</div>
+          <div class="config-note">Before using this page, replace <code>YOUR-N8N-HOST</code> in the <code>WEBHOOK_URL</code> constant near the top of the page source with your active n8n production host — there's no field for it in the interface on purpose. This response shape depends on the "Respond Success" node in n8n. By default it returns <code>headline</code> and <code>caption</code> only — the rendered file goes out to Teams, not back to this page. If you want an inline preview here, have that node also return <code>assetUrl</code> (or <code>base64</code> + <code>mimeType</code>).</div>
         </div>
       </fieldset>
 
@@ -417,7 +409,7 @@ button.primary.loading .btn-label{display:none}
 
   function validate(){
     let ok = true;
-    const required = ["brandName","productName","creativeBrief","designId","formatName","recipientEmail"];
+    const required = ["brandName","productName","creativeBrief","designId","formatName"];
     required.forEach(id=>{ const input=document.getElementById(id); const good=!!String(input.value||"").trim(); showFieldError(input,!good); ok = good && ok; });
     const fileOk = validFile(imageReferenceFile.files[0]);
     showFieldError(imageReferenceFile, !fileOk);
@@ -478,7 +470,7 @@ button.primary.loading .btn-label{display:none}
     const strong = document.createElement("strong");
     strong.textContent = payload && payload.headline ? payload.headline : "Workflow responded";
     const p = document.createElement("p");
-    p.textContent = (payload && payload.caption) ? payload.caption : (payload && payload.message) ? payload.message : "Check your inbox — the rendered creative was emailed separately.";
+    p.textContent = (payload && payload.caption) ? payload.caption : (payload && payload.message) ? payload.message : "Check your Teams channel — the rendered creative was posted separately.";
     copy.append(strong, p);
     if(asset){
       const a = document.createElement("a");
@@ -512,7 +504,6 @@ button.primary.loading .btn-label{display:none}
     appendIf(data, "content_format_reference", formatChoice ? formatChoice.value : "");
     appendIf(data, "abyssale_design_id", document.getElementById("designId").value.trim());
     appendIf(data, "abyssale_format_name", document.getElementById("formatName").value.trim());
-    appendIf(data, "recipient_email", document.getElementById("recipientEmail").value.trim());
     if(imageReferenceFile.files[0]) data.append("image_reference_file", imageReferenceFile.files[0]);
 
     submitBtn.disabled = true; submitBtn.classList.add("loading");
@@ -526,7 +517,7 @@ button.primary.loading .btn-label{display:none}
       const payload = type.includes("application/json") ? await response.json() : { message: await response.text() };
       if(!response.ok) throw new Error(payload.message || `Workflow request failed (${response.status})`);
       renderResult(payload);
-      setStatus("success","Pipeline ran successfully", payload.message || "Gemini and Abyssale completed. Review the headline and caption below — the rendered file was emailed.");
+      setStatus("success","Pipeline ran successfully", payload.message || "Gemini and Abyssale completed. Review the headline and caption below — the rendered file was posted to your Teams channel.");
     }catch(error){
       setProcessing(false);
       resultStatus.textContent = "Workflow error";
