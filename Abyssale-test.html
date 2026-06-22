@@ -367,6 +367,13 @@ button.primary.loading .btn-label{display:none}
   const resultStatus = document.getElementById("resultStatus");
   const resultCardWrap = document.getElementById("resultCardWrap");
 
+  const brandTemplateMap = {
+    "Wolters Kluwer": {
+      designId: "020478ff-0a72-4711-8dab-ec4ef207c8d4",
+      formatName: "social-post"
+    }
+  };
+
   function formatBytes(bytes){ if(bytes<1024) return `${bytes} B`; if(bytes<1048576) return `${(bytes/1024).toFixed(1)} KB`; return `${(bytes/1048576).toFixed(1)} MB`; }
   function validFile(file){ return !file || file.size<=MAX_FILE_MB*1024*1024; }
 
@@ -396,6 +403,20 @@ button.primary.loading .btn-label{display:none}
     transfer.items.add(files[0]);
     imageReferenceFile.files = transfer.files;
     imageReferenceFile.dispatchEvent(new Event("change",{bubbles:true}));
+  });
+
+  const brandNameInput = document.getElementById("brandName");
+  const designIdInput = document.getElementById("designId");
+  const formatNameInput = document.getElementById("formatName");
+  brandNameInput.addEventListener("input", e=>{
+    const brand = e.target.value.trim();
+    if(brandTemplateMap[brand]){
+      const template = brandTemplateMap[brand];
+      designIdInput.value = template.designId;
+      formatNameInput.value = template.formatName;
+      showFieldError(designIdInput, false);
+      showFieldError(formatNameInput, false);
+    }
   });
 
   function showFieldError(input, show){
