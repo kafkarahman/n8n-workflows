@@ -473,16 +473,24 @@ button.primary.loading .btn-label{display:none}
     const card = document.createElement("article");
     card.className = "result-card";
 
-    const asset = extractAsset(payload);
-    if(asset){
+    // Show generated image if available
+    if(payload && payload.image_base64){
       const img = document.createElement("img");
-      img.src = asset.url; img.alt = asset.name;
+      img.src = "data:" + (payload.mime_type || "image/png") + ";base64," + payload.image_base64;
+      img.alt = "Generated creative";
       card.append(img);
     } else {
-      const noPreview = document.createElement("div");
-      noPreview.className = "no-preview";
-      noPreview.textContent = "No preview returned";
-      card.append(noPreview);
+      const asset = extractAsset(payload);
+      if(asset){
+        const img = document.createElement("img");
+        img.src = asset.url; img.alt = asset.name;
+        card.append(img);
+      } else {
+        const noPreview = document.createElement("div");
+        noPreview.className = "no-preview";
+        noPreview.textContent = "No preview returned";
+        card.append(noPreview);
+      }
     }
 
     const copy = document.createElement("div");
@@ -490,14 +498,8 @@ button.primary.loading .btn-label{display:none}
     const strong = document.createElement("strong");
     strong.textContent = payload && payload.headline ? payload.headline : "Workflow responded";
     const p = document.createElement("p");
-    p.textContent = (payload && payload.caption) ? payload.caption + " →" : (payload && payload.message) ? payload.message : "Check your Teams channel — the rendered creative was posted separately.";
+    p.textContent = (payload && payload.caption) ? payload.caption + " →" : (payload && payload.message) ? payload.message : "Creative posted to your Teams channel.";
     copy.append(strong, p);
-    if(asset){
-      const a = document.createElement("a");
-      a.href = asset.url; a.target = "_blank"; a.rel = "noopener";
-      a.textContent = "Open full size →";
-      copy.append(a);
-    }
     card.append(copy);
     resultCardWrap.append(card);
   }
