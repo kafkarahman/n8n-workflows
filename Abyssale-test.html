@@ -490,7 +490,7 @@ button.primary.loading .btn-label{display:none}
     const strong = document.createElement("strong");
     strong.textContent = payload && payload.headline ? payload.headline : "Workflow responded";
     const p = document.createElement("p");
-    p.textContent = (payload && payload.caption) ? payload.caption : (payload && payload.message) ? payload.message : "Check your Teams channel — the rendered creative was posted separately.";
+    p.textContent = (payload && payload.caption) ? payload.caption + " →" : (payload && payload.message) ? payload.message : "Check your Teams channel — the rendered creative was posted separately.";
     copy.append(strong, p);
     if(asset){
       const a = document.createElement("a");
