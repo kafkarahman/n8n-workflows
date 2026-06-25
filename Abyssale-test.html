@@ -369,7 +369,7 @@ button.primary.loading .btn-label{display:none}
 
   const brandTemplateMap = {
     "Wolters Kluwer": {
-      designId: "a784e2aa-bc9c-45bb-a6fe-ef5d22d9b068",
+      designId: "9c960f0b-1c02-4eef-8085-d69296475799",
       formatName: "1200x1350"
     }
   };
@@ -459,7 +459,7 @@ button.primary.loading .btn-label{display:none}
 
   function extractAsset(payload){
     if(!payload || typeof payload !== "object") return null;
-    let url = payload.assetUrl || payload.imageUrl || payload.fileUrl || payload.url || "";
+    let url = payload.assetUrl || payload.imageUrl || payload.fileUrl || payload.url || payload.preview_url || "";
     if(!url && payload.base64) url = `data:${payload.mimeType||"image/png"};base64,${payload.base64}`;
     return url ? { url, name: payload.fileName || "Generated creative" } : null;
   }
@@ -498,7 +498,7 @@ button.primary.loading .btn-label{display:none}
     const strong = document.createElement("strong");
     strong.textContent = payload && payload.headline ? payload.headline : "Workflow responded";
     const p = document.createElement("p");
-    p.textContent = (payload && payload.caption) ? payload.caption + " →" : (payload && payload.message) ? payload.message : "Creative posted to your Teams channel.";
+    p.textContent = (payload && payload.cta) ? payload.cta + " →" : (payload && payload.message) ? payload.message : "Creative posted to your Teams channel.";
     copy.append(strong, p);
     card.append(copy);
     resultCardWrap.append(card);
