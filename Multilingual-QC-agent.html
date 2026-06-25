@@ -454,7 +454,7 @@ button.primary.loading .btn-label{display:none}
       <aside class="hero-panel" aria-label="QC workflow summary">
         <div class="hero-panel-head"><strong>Automated QC workflow</strong><span>Human-in-the-loop</span></div>
         <div class="process-list">
-          <div class="process-item"><span class="process-index">01</span><div class="process-copy"><strong>Submit source and variants</strong><span>PDF or PNG · up to 25 MB each</span></div><span class="process-state">Input</span></div>
+          <div class="process-item"><span class="process-index">01</span><div class="process-copy"><strong>Submit source and variants</strong><span>PDF, PNG, JPEG or WEBP · up to 25 MB each</span></div><span class="process-state">Input</span></div>
           <div class="process-item"><span class="process-index">02</span><div class="process-copy"><strong>Run automated checks</strong><span>Content, consistency and localisation</span></div><span class="process-state">Agent</span></div>
           <div class="process-item"><span class="process-index">03</span><div class="process-copy"><strong>Escalate exceptions</strong><span>Reviewer receives borderline findings</span></div><span class="process-state">HITL</span></div>
         </div>
@@ -501,6 +501,11 @@ button.primary.loading .btn-label{display:none}
               <p class="hint">Defaults to v1 when left blank.</p>
             </div>
           </div>
+          <div class="field">
+            <label for="brandName">Brand name <span class="hint">Optional</span></label>
+            <input type="text" id="brandName" name="brandName" autocomplete="off" placeholder="e.g. 2X">
+            <p class="hint">If provided, each asset is checked for the correct brand logo.</p>
+          </div>
         </div>
       </fieldset>
 
@@ -513,14 +518,14 @@ button.primary.loading .btn-label{display:none}
         <div class="section-body">
           <div class="field" id="masterFileField">
             <label class="upload-zone" for="masterFile" id="masterUploadZone">
-              <input type="file" id="masterFile" accept=".pdf,.png">
+              <input type="file" id="masterFile" accept=".pdf,.png,.jpg,.jpeg,.webp">
               <span class="upload-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
               </span>
-              <span class="upload-copy"><strong>Drop the master file here or browse</strong><span>The approved PDF or PNG used as the source of truth.</span><span class="file-meta"><span>PDF / PNG</span><span>Max 25 MB</span></span></span>
+              <span class="upload-copy"><strong>Drop the master file here or browse</strong><span>The approved PDF, PNG, JPEG or WEBP used as the source of truth.</span><span class="file-meta"><span>PDF / PNG / JPEG / WEBP</span><span>Max 25 MB</span></span></span>
               <span class="file-name" id="masterFileName">No file selected</span>
             </label>
-            <p class="error-text">A valid master PDF or PNG under 25 MB is required.</p>
+            <p class="error-text">A valid master PDF, PNG, JPEG or WEBP under 25 MB is required.</p>
           </div>
 
           <div class="field" id="masterCopyField" style="display:none;">
@@ -533,14 +538,14 @@ button.primary.loading .btn-label{display:none}
               </div>
               <div>
                 <label class="upload-zone" for="masterCopyFile" id="masterCopyUploadZone" style="min-height:140px;">
-                  <input type="file" id="masterCopyFile" accept=".pdf,.png">
+                  <input type="file" id="masterCopyFile" accept=".pdf,.png,.jpg,.jpeg,.webp,.csv">
                   <span class="upload-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg>
                   </span>
-                  <span class="upload-copy"><strong>Or upload document</strong><span>Extract copy from a PDF or image.</span><span class="file-meta"><span>PDF / PNG</span><span>Max 25 MB</span></span></span>
+                  <span class="upload-copy"><strong>Or upload document</strong><span>Extract copy from a PDF or image, or upload a CSV with "type,text" per row (e.g. Headline,Move faster, together.)</span><span class="file-meta"><span>PDF / PNG / JPEG / WEBP / CSV</span><span>Max 25 MB</span></span></span>
                   <span class="file-name" id="masterCopyFileName">No file selected</span>
                 </label>
-                <p class="error-text" id="masterCopyFileError">A valid PDF or PNG under 25 MB is required if uploading.</p>
+                <p class="error-text" id="masterCopyFileError">A valid PDF, PNG, JPEG, WEBP or CSV under 25 MB is required if uploading.</p>
               </div>
             </div>
             <p class="error-text" id="masterCopyError">Paste the approved copy text or upload a document before submitting.</p>
@@ -551,7 +556,7 @@ button.primary.loading .btn-label{display:none}
       <fieldset class="form-section mode-panel" id="secondary-files">
         <div class="section-header">
           <span class="section-number">04</span>
-          <div><h2 class="section-title">Add files to compare</h2><p class="section-description" id="secondaryHint">Add every localised version to check against the master and tag each with its locale code.</p></div>
+          <div><h2 class="section-title">Add files to compare</h2><p class="section-description" id="secondaryHint">Add every localised version to check against the master and tag each with its locale code. For Copy QC with email files: supports OFT and MSG formats with Gemini-powered content matching.</p></div>
           <span class="section-status" id="comparisonCount">1 asset</span>
         </div>
         <div class="section-body">
@@ -620,7 +625,7 @@ button.primary.loading .btn-label{display:none}
       </div>
     </section>
 
-    <footer class="page-footer"><span>2X Experience Design Solutions · Internal tool</span><span>Accepted formats: PDF, PNG · Maximum 25 MB per file</span></footer>
+    <footer class="page-footer"><span>2X Experience Design Solutions · Internal tool</span><span>Accepted formats: PDF, PNG, JPEG, WEBP · Maximum 25 MB per file</span></footer>
   </main>
 </div>
 
@@ -634,7 +639,8 @@ button.primary.loading .btn-label{display:none}
   const POLL_INTERVAL_MS = 6000;
   const POLL_MAX_ATTEMPTS = 50; // ~5 minutes of active polling before switching to manual check
   const MAX_FILE_MB = 25;
-  const ACCEPTED_TYPES = [".pdf", ".png"];
+  const ACCEPTED_TYPES = [".pdf", ".png", ".jpg", ".jpeg", ".webp", ".oft", ".msg"];
+  const MASTER_COPY_ACCEPTED_TYPES = [...ACCEPTED_TYPES, ".csv"];
 
   const form = document.getElementById("qcForm");
   const qcTypeToggle = document.getElementById("qcTypeToggle");
@@ -712,13 +718,13 @@ button.primary.loading .btn-label{display:none}
     updateSummary();
   }
 
-  function validFileType(file){
+  function validFileType(file,types=ACCEPTED_TYPES){
     const name = file.name.toLowerCase();
-    return ACCEPTED_TYPES.some(ext => name.endsWith(ext));
+    return types.some(ext => name.endsWith(ext));
   }
 
-  function validFile(file){
-    return !!file && validFileType(file) && file.size <= MAX_FILE_MB * 1024 * 1024;
+  function validFile(file,types=ACCEPTED_TYPES){
+    return !!file && validFileType(file,types) && file.size <= MAX_FILE_MB * 1024 * 1024;
   }
 
   function formatBytes(bytes){
@@ -791,12 +797,12 @@ button.primary.loading .btn-label{display:none}
       <div class="secondary-grid">
         <div>
           <label class="upload-zone" for="${uid}">
-            <input type="file" id="${uid}" class="file-input" accept=".pdf,.png" aria-label="Secondary file">
+            <input type="file" id="${uid}" class="file-input" accept=".pdf,.png,.jpg,.jpeg,.webp,.oft,.msg" aria-label="Secondary file">
             <span class="upload-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg></span>
-            <span class="upload-copy"><strong>Drop a file or browse</strong><span>PDF or PNG · maximum 25 MB</span></span>
+            <span class="upload-copy"><strong>Drop a file or browse</strong><span>PDF, PNG, JPEG, WEBP, OFT, or MSG · maximum 25 MB</span></span>
             <span class="file-name">No file selected</span>
           </label>
-          <p class="error-text">Choose a PDF or PNG under 25 MB.</p>
+          <p class="error-text">Choose a PDF, PNG, JPEG or WEBP under 25 MB.</p>
         </div>
         <div class="field tag-field">
           <label for="${uid}_tag">${currentQcType() === "translation" ? "Locale code" : "Asset label"} <span class="required">*</span></label>
@@ -864,7 +870,7 @@ button.primary.loading .btn-label{display:none}
       showFieldError(masterFileInput,!masterOk);
       ok = masterOk && ok;
     }else{
-      const hasFile = validFile(masterCopyFile.files[0]);
+      const hasFile = validFile(masterCopyFile.files[0],MASTER_COPY_ACCEPTED_TYPES);
       const hasText = !!masterCopyText.value.trim();
       const copyOk = hasFile || hasText;
       if(!copyOk){
@@ -1049,6 +1055,7 @@ button.primary.loading .btn-label{display:none}
     data.append("qcType",qcType);
     data.append("campaignName",document.getElementById("campaignName").value.trim());
     data.append("batchVersion",document.getElementById("batchVersion").value.trim() || "v1");
+    data.append("brandName",document.getElementById("brandName").value.trim());
     data.append("submitterName",document.getElementById("submitterName").value.trim());
     data.append("submitterEmail",document.getElementById("submitterEmail").value.trim());
     data.append("priority",document.querySelector('input[name="priority"]:checked').value);
