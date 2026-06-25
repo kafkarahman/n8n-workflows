@@ -332,6 +332,37 @@ button.primary.loading .btn-label{display:none}
 #statusBox p{margin:0}
 #statusBox code{display:inline-block;margin-top:7px;padding:3px 6px;border-radius:6px;background:rgba(0,0,0,.22);color:var(--white);font-size:10px}
 @keyframes statusIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* QC report panel */
+#reportPanel{display:none;margin-top:18px}
+#reportPanel.show{display:block;animation:statusIn .3s ease both}
+.report-state{display:flex;align-items:center;gap:14px;padding:18px 20px;border:1px solid var(--line);border-radius:15px;background:#171717;color:var(--muted);font-size:12px}
+.report-spinner{flex:0 0 auto;width:16px;height:16px;border:2px solid rgba(255,255,255,.18);border-top-color:var(--mode-accent);border-radius:50%;animation:spin .8s linear infinite}
+.report-state strong{display:block;margin-bottom:2px;color:var(--soft);font-size:12px}
+.report-state-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.report-check-btn{height:34px;padding:0 14px;border:1px solid var(--line);border-radius:999px;background:var(--surface-2);color:var(--soft);font-size:11px;font-weight:650;cursor:pointer;transition:.18s ease}
+.report-check-btn:hover{border-color:var(--mode-accent);color:#fff}
+.report-summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px}
+.report-summary-card{padding:16px;border:1px solid var(--line);border-radius:14px;background:#171717;text-align:center}
+.report-summary-card .count{display:block;font-size:26px;font-weight:750;letter-spacing:-.02em}
+.report-summary-card .label{display:block;margin-top:4px;color:var(--muted);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.report-summary-card.pass .count{color:var(--teal)}
+.report-summary-card.review .count{color:var(--amber)}
+.report-summary-card.fail .count{color:var(--red)}
+.report-assets{display:grid;gap:10px}
+.report-asset{padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:#171717}
+.report-asset-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.report-asset-tag{color:var(--soft);font-size:12px;font-weight:650}
+.report-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.report-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.report-badge.pass{background:rgba(0,168,132,.12);color:var(--teal)}
+.report-badge.review{background:rgba(255,176,32,.14);color:var(--amber)}
+.report-badge.fail{background:rgba(255,15,15,.12);color:var(--red)}
+.report-confidence{color:var(--muted-2);font-size:10px}
+.report-issues{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:7px}
+.report-issues li{padding:9px 11px;border:1px solid var(--line-soft);border-radius:10px;background:rgba(255,255,255,.02);color:var(--muted);font-size:11px;line-height:1.5}
+.report-issues li b{color:var(--soft)}
+.report-batch-meta{margin-bottom:14px;color:var(--muted-2);font-size:10px}
 .page-footer{display:flex;justify-content:space-between;gap:20px;margin-top:40px;padding-top:22px;border-top:1px solid var(--line);color:var(--muted-2);font-size:10px}
 
 @media(max-width:980px){
@@ -578,6 +609,17 @@ button.primary.loading .btn-label{display:none}
       </div>
     </form>
 
+    <section id="reportPanel" aria-live="polite">
+      <div class="section-header" style="border:1px solid var(--line);border-radius:var(--radius) var(--radius) 0 0;background:var(--surface);border-bottom:1px solid var(--line);padding:23px 26px 21px;">
+        <span class="section-number">✓</span>
+        <div><h2 class="section-title">QC report</h2><p class="section-description">Results appear here automatically once the workflow finishes — this can take anywhere from under a minute to up to 48 hours if a human reviewer needs to weigh in.</p></div>
+        <span class="section-status" id="reportSectionStatus">Pending</span>
+      </div>
+      <div style="border:1px solid var(--line);border-top:0;border-radius:0 0 var(--radius) var(--radius);background:var(--surface);padding:26px;">
+        <div id="reportBody"></div>
+      </div>
+    </section>
+
     <footer class="page-footer"><span>2X Experience Design Solutions · Internal tool</span><span>Accepted formats: PDF, PNG · Maximum 25 MB per file</span></footer>
   </main>
 </div>
@@ -586,8 +628,11 @@ button.primary.loading .btn-label{display:none}
 (function(){
   "use strict";
 
-  // n8n webhook endpoint for QC batch intake.
+  // n8n webhook endpoints for QC batch intake and report polling.
   const WEBHOOK_URL = "https://ai-lab-2x.app.n8n.cloud/webhook/qc-batch-intake";
+  const STATUS_URL = "https://ai-lab-2x.app.n8n.cloud/webhook/qc-batch-status";
+  const POLL_INTERVAL_MS = 6000;
+  const POLL_MAX_ATTEMPTS = 50; // ~5 minutes of active polling before switching to manual check
   const MAX_FILE_MB = 25;
   const ACCEPTED_TYPES = [".pdf", ".png"];
 
@@ -877,6 +922,102 @@ button.primary.loading .btn-label{display:none}
     document.querySelectorAll(".secondary-row").forEach(row => updateFileDisplay(row.querySelector(".file-input"),row.querySelector(".file-name")));
   }
 
+  // --- QC report polling ---
+  const reportPanel = document.getElementById("reportPanel");
+  const reportBody = document.getElementById("reportBody");
+  const reportSectionStatus = document.getElementById("reportSectionStatus");
+  let pollTimer = null;
+  let pollAttempts = 0;
+
+  function statusBadgeClass(status){
+    if(status === "PASS") return "pass";
+    if(status === "REVIEW") return "review";
+    return "fail";
+  }
+
+  function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g,c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+  }
+
+  function renderProcessing(message,batchId,showCheckButton){
+    reportSectionStatus.textContent = "Pending";
+    reportBody.innerHTML = `
+      <div class="report-state">
+        <span class="report-spinner" aria-hidden="true" style="${showCheckButton ? "display:none" : ""}"></span>
+        <div><strong>${escapeHtml(message)}</strong><span>Batch ID: ${escapeHtml(batchId)}</span></div>
+        ${showCheckButton ? `<div class="report-state-actions"><button type="button" class="report-check-btn" id="reportCheckNowBtn">Check now</button></div>` : ""}
+      </div>`;
+    if(showCheckButton){
+      document.getElementById("reportCheckNowBtn").addEventListener("click",() => {
+        pollAttempts = 0;
+        renderProcessing("Checking for your QC report…",batchId,false);
+        pollBatchReport(batchId);
+      });
+    }
+  }
+
+  function renderReport(report){
+    reportSectionStatus.textContent = "Complete";
+    const summary = report.summary || {PASS:0,REVIEW:0,FAIL:0};
+    const assets = Array.isArray(report.assets) ? report.assets : [];
+    const assetCards = assets.map(asset => {
+      const badge = statusBadgeClass(asset.status);
+      const issues = Array.isArray(asset.issues) ? asset.issues : [];
+      const issuesHtml = issues.length
+        ? `<ul class="report-issues">${issues.map(issue => `<li><b>[${escapeHtml((issue.severity || "").toUpperCase())}] ${escapeHtml(issue.category)}</b> — ${escapeHtml(issue.description)}</li>`).join("")}</ul>`
+        : `<ul class="report-issues"><li>No issues detected.</li></ul>`;
+      return `
+        <div class="report-asset">
+          <div class="report-asset-head">
+            <span class="report-asset-tag">${escapeHtml(asset.tag || asset.secondaryFileKey || "Asset")}</span>
+            <span class="report-badge ${badge}">${escapeHtml(asset.status)}</span>
+            <span class="report-confidence">Confidence ${Math.round((asset.confidence || 0) * 100)}%</span>
+          </div>
+          ${issuesHtml}
+        </div>`;
+    }).join("");
+
+    reportBody.innerHTML = `
+      <p class="report-batch-meta">${escapeHtml(report.campaignName || "")} · Batch ID: ${escapeHtml(report.batchId || "")} · Generated ${report.generatedAt ? new Date(report.generatedAt).toLocaleString() : ""}</p>
+      <div class="report-summary-grid">
+        <div class="report-summary-card pass"><span class="count">${summary.PASS || 0}</span><span class="label">Pass</span></div>
+        <div class="report-summary-card review"><span class="count">${summary.REVIEW || 0}</span><span class="label">Review</span></div>
+        <div class="report-summary-card fail"><span class="count">${summary.FAIL || 0}</span><span class="label">Fail</span></div>
+      </div>
+      <div class="report-assets">${assetCards || "<p class=\"hint\">No asset results in this report.</p>"}</div>`;
+  }
+
+  function pollBatchReport(batchId){
+    if(pollTimer) clearInterval(pollTimer);
+    reportPanel.classList.add("show");
+
+    async function check(){
+      pollAttempts += 1;
+      try{
+        const response = await fetch(`${STATUS_URL}?batchId=${encodeURIComponent(batchId)}`);
+        const data = await response.json();
+        if(data.status === "complete" && data.report){
+          clearInterval(pollTimer);
+          pollTimer = null;
+          renderReport(data.report);
+          return;
+        }
+      }catch(error){
+        // Transient network error while polling — keep trying until the attempt cap.
+      }
+      if(pollAttempts >= POLL_MAX_ATTEMPTS){
+        clearInterval(pollTimer);
+        pollTimer = null;
+        renderProcessing("Still waiting — this batch may be in human review. You'll also get a notification when it's ready.",batchId,true);
+      }
+    }
+
+    pollAttempts = 0;
+    renderProcessing("Processing your batch…",batchId,false);
+    check();
+    pollTimer = setInterval(check,POLL_INTERVAL_MS);
+  }
+
   bindToggle(qcTypeToggle,() => setMode(currentQcType()));
   bindToggle(priorityToggle);
   setupUploadZone(document.getElementById("masterUploadZone"),masterFileInput,document.getElementById("masterFileName"));
@@ -942,6 +1083,9 @@ button.primary.loading .btn-label{display:none}
       const payload = contentType.includes("application/json") ? await response.json() : {message:await response.text()};
       if(response.ok){
         setStatus("success","Batch submitted",payload.message || "Processing has started and exceptions will be routed to the nominated reviewer.",payload.batchId || "n/a");
+        if(payload.batchId){
+          pollBatchReport(payload.batchId);
+        }
         form.reset();
         secondaryRows.replaceChildren();
         rowCounter = 0;
